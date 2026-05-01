@@ -24,6 +24,48 @@ from scipy.integrate import BDF, LSODA, RK23, RK45, Radau, solve_ivp
 
 #Initial experiment
 Total_time = 36000 #[s] Total simulation time
+
+#EXPERIMENT 1
+# X_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time, 0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
+# X_fs    =        np.array([1.0,      0.75,            0.5,            0.25,           0.01,           0.01      ]) #[-] fuel rack factor, 1 is maximum
+# Y_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time, 0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
+# Y_df    =        np.array([1,        1.0,             1.0,            1.0,            1.0,            1.0       ]) #[-] disturbance factor
+
+#EXPERIMENT 2
+# X_iv_t_control = np.array([0,        Total_time                     ]) #[s] setting time point
+# X_fs    =        np.array([1.0,      1.0                            ]) #[-] fuel rack factor, 1 is maximum
+# Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
+# Y_df    =        np.array([1,        1.5,             1.5,          ]) #[-] disturbance factor
+
+#EXPERIMENT 3
+# dt = 1
+# X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
+# X_fs    =        X_iv_t_control * (19 / Total_time) + 1  #[-] fuel rack factor, 20 is maximum apparently
+# Y_iv_t_control = np.array([0,   Total_time])             #[s] setting time point
+# Y_df    =        np.array([1,        1 ])                #[-] disturbance factor
+
+#EXPERIMENT 4
+#Imput
+# X_fs_amp= 
+# X_fs_freq=
+# X_fs_base=
+# def calc_X_fs_set(t):
+#     return X_fs_base + X_fs_amp * np.sin(2 * np.pi * X_fs_freq * t + X_fs_phase)
+# X_fs_set = calc_X_fs_set(t)
+# X_out = calc_X_fs_set(sol.t)
+
+# X_iv_t_control = np.array([0,        Total_time                     ]) #[s] setting time point
+# X_fs    =        np.array([1.0,      1.0                            ]) #[-] fuel rack factor, 1 is maximum
+# Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
+# Y_df    =        np.array([1,        1.5,             1.5,          ]) #[-] disturbance factor
+
+#EXPERIMENT 5
+# X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
+# X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0         ]) #[-] fuel rack factor, 1 is maximum
+# Y_iv_t_control = np.array([0,        0.1*Total_time, 0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time, Total_time]) #[s] setting time point
+# Y_df    =        np.array([1,        1.0,            1.0,            1.0,            1.0,            1.0,            1.0         ]) #[-] disturbance factor
+
+#ORIGINEEL
 X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
 X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0         ]) #[-] fuel rack factor, 1 is maximum
 Y_iv_t_control = np.array([0,        0.1*Total_time, 0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time, Total_time]) #[s] setting time point
@@ -50,7 +92,7 @@ time_out = np.linspace(0, Total_time, Sim_step+1)
 
 
 #Fuel Properties
-LHV = 42700 #[kJ/kg]  Lower Heating Value
+LHV = 42700 #[kJ/kg]  Lower Heating Value (hoeveelheid energie die vrijkomt als 1kg brandstof wordt verbrand.)
 print('fuel properties loaded')
 
 #Physical constant
@@ -244,18 +286,18 @@ plt.tight_layout()
 plt.savefig('figures/start_fig01.jpg')
 
 
-# plt.figure(2, figsize=(16,9))
-# plt.ylim(0, 16)
-# plt.plot(t_out, v_s_out, t_out, n_e_out, t_out, n_p_out, linewidth=width)
-# plt.legend(('Ship speed [m/s]', 'Engine rot. speed [rps]', 'Propeller rot. speed [rps]'), loc='upper right')
-# plt.xlabel('Time [s]')
-# plt.ylabel('Ship speed [m/s], Engine / Propeller speed [rps]')
-# plt.grid(True)
-# plt.title('figuur 2', loc='right', pad=20)
-# plt.savefig('figures/start_fig02.jpg')
+plt.figure(2, figsize=(16,9))
+plt.ylim(0, 16)
+plt.plot(t_out, v_s_out, t_out, n_e_out, t_out, n_p_out, linewidth=width)
+plt.legend(('Ship speed [m/s]', 'Engine rot. speed [rps]', 'Propeller rot. speed [rps]'), loc='upper right')
+plt.xlabel('Time [s]')
+plt.ylabel('Ship speed [m/s], Engine / Propeller speed [rps]')
+plt.grid(True)
+plt.title('figuur 2', loc='right', pad=20)
+plt.savefig('figures/start_fig02.jpg')
 
 
 
 
-plt.show()
+plt.show(block=False)
 print('End simulation run')
