@@ -26,10 +26,10 @@ from scipy.integrate import BDF, LSODA, RK23, RK45, Radau, solve_ivp
 Total_time = 36000 #[s] Total simulation time
 
 #EXPERIMENT 1
-# X_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time, 0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
-# X_fs    =        np.array([1.0,      0.75,            0.5,            0.25,           0.01,           0.01      ]) #[-] fuel rack factor, 1 is maximum
-# Y_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time, 0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
-# Y_df    =        np.array([1,        1.0,             1.0,            1.0,            1.0,            1.0       ]) #[-] disturbance factor
+# X_iv_t_control = np.array([0,        0.2*Total_time,  0.2*Total_time,  0.4*Total_time, 0.4*Total_time, 0.6*Total_time, 0.6*Total_time, 0.8*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
+# X_fs    =        np.array([1.0,      1.0,             0.75,            0.75,           0.5,            0.5,            0.25,           0.25,           0.01,           0.01      ]) #[-] fuel rack factor, 1 is maximum
+# Y_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time,  0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
+# Y_df    =        np.array([1,        1.0,             1.0,             1.0,            1.0,            1.0       ]) #[-] disturbance factor
 
 #EXPERIMENT 2
 # X_iv_t_control = np.array([0,        Total_time                     ]) #[s] setting time point
@@ -45,10 +45,11 @@ Total_time = 36000 #[s] Total simulation time
 # Y_df    =        np.array([1,        1 ])                #[-] disturbance factor
 
 #EXPERIMENT 4
-#Imput
-# X_fs_amp= 
-# X_fs_freq=
-# X_fs_base=
+#Input
+# X_fs_amp= 0.5
+# X_fs_freq= 0.001
+# X_fs_base= 0.5
+# X_fs_phase = 0
 # def calc_X_fs_set(t):
 #     return X_fs_base + X_fs_amp * np.sin(2 * np.pi * X_fs_freq * t + X_fs_phase)
 # X_fs_set = calc_X_fs_set(t)
@@ -59,6 +60,15 @@ Total_time = 36000 #[s] Total simulation time
 # Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
 # Y_df    =        np.array([1,        1.5,             1.5,          ]) #[-] disturbance factor
 
+
+# dt = 1
+# X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
+# print(X_iv_t_control)
+# X_fs    =        X_fs_base + X_fs_amp * np.sin(2 * np.pi * X_fs_freq * X_iv_t_control + X_fs_phase)  #[-] fuel rack factor, 20 is maximum apparently
+# print(X_fs)
+# Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
+# Y_df    =        np.array([1,        1.5,                 1.5,          ]) #[-] disturbance factor
+
 #EXPERIMENT 5
 # X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
 # X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0         ]) #[-] fuel rack factor, 1 is maximum
@@ -67,9 +77,9 @@ Total_time = 36000 #[s] Total simulation time
 
 #ORIGINEEL
 X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
-X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0         ]) #[-] fuel rack factor, 1 is maximum
-Y_iv_t_control = np.array([0,        0.1*Total_time, 0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time, Total_time]) #[s] setting time point
-Y_df    =        np.array([1,        1.0,            1.0,            1.0,            1.0,            1.0,            1.0         ]) #[-] disturbance factor
+X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0        ]) #[-] fuel rack factor, 1 is maximum
+Y_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  Total_time  ]) #[s] setting time point
+Y_df    =        np.array([1,        1.0,             1.0,            1.0,            1.0,            1.0,             1.0         ]) #[-] disturbance factor
 
 
 #Time step setting
@@ -260,7 +270,7 @@ width = 0.8 #Plot line width setting
 
 plt.figure(figsize=(16,16))
 plt.subplot(4, 1, 1)
-plt.ylim(0,6)
+plt.ylim(0,16)
 plt.plot(t_out, v_s_out, linewidth=width)
 plt.title('Ship Propulsion Output')
 plt.xlabel('Time [s]')
@@ -277,7 +287,7 @@ plt.xlabel('Time [s]')
 plt.ylabel('Electric energy consumed [Ws=J]')
 plt.grid(True)
 plt.subplot(4, 1, 4)
-plt.ylim(0,1)
+plt.ylim(0,2)
 plt.plot(t_out, X_out, linewidth=width)
 plt.xlabel('Time [s]')
 plt.ylabel('Fuel rack [%]')
