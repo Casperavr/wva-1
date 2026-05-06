@@ -24,63 +24,80 @@ from scipy.integrate import BDF, LSODA, RK23, RK45, Radau, solve_ivp
 
 #Initial experiment
 Total_time = 36000 #[s] Total simulation time
+EXPERIMENT = 0
 
-#EXPERIMENT 1
-# X_iv_t_control = np.array([0,        0.2*Total_time,  0.2*Total_time,  0.4*Total_time, 0.4*Total_time, 0.6*Total_time, 0.6*Total_time, 0.8*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
-# X_fs    =        np.array([1.0,      1.0,             0.75,            0.75,           0.5,            0.5,            0.25,           0.25,           0.01,           0.01      ]) #[-] fuel rack factor, 1 is maximum
-# Y_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time,  0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
-# Y_df    =        np.array([1,        1.0,             1.0,             1.0,            1.0,            1.0       ]) #[-] disturbance factor
+if EXPERIMENT == 0:
+    #ORIGINEEL
+    X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
+    X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0        ]) #[-] fuel rack factor, 1 is maximum
+    Y_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  Total_time  ]) #[s] setting time point
+    Y_df    =        np.array([1,        1.0,             1.0,            1.0,            1.0,            1.0,             1.0         ]) #[-] disturbance factor
 
-#EXPERIMENT 2
-# X_iv_t_control = np.array([0,        Total_time                     ]) #[s] setting time point
-# X_fs    =        np.array([1.0,      1.0                            ]) #[-] fuel rack factor, 1 is maximum
-# Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
-# Y_df    =        np.array([1,        1.5,             1.5,          ]) #[-] disturbance factor
+elif EXPERIMENT == 1:
+    #EXPERIMENT 1
+    X_iv_t_control = np.array([0,        0.2*Total_time,  0.2*Total_time,  0.4*Total_time, 0.4*Total_time, 0.6*Total_time, 0.6*Total_time, 0.8*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
+    X_fs    =        np.array([1.0,      1.0,             0.75,            0.75,           0.5,            0.5,            0.25,           0.25,           0.01,           0.01      ]) #[-] fuel rack factor, 1 is maximum
+    Y_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time,  0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
+    Y_df    =        np.array([1,        1.0,             1.0,             1.0,            1.0,            1.0       ]) #[-] disturbance factor
 
-#EXPERIMENT 3
-# dt = 1
-# X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
-# X_fs    =        X_iv_t_control * (19 / Total_time) + 1  #[-] fuel rack factor, 20 is maximum apparently
-# Y_iv_t_control = np.array([0,   Total_time])             #[s] setting time point
-# Y_df    =        np.array([1,        1 ])                #[-] disturbance factor
+elif EXPERIMENT == 2:
+    #EXPERIMENT 2
+    X_iv_t_control = np.array([0,        Total_time                     ]) #[s] setting time point
+    X_fs    =        np.array([1.0,      1.0                            ]) #[-] fuel rack factor, 1 is maximum
+    Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
+    Y_df    =        np.array([1,        1.5,             1.5,          ]) #[-] disturbance factor
 
-#EXPERIMENT 4
-#Input
-# X_fs_amp= 0.5
-# X_fs_freq= 0.001
-# X_fs_base= 0.5
-# X_fs_phase = 0
-# def calc_X_fs_set(t):
-#     return X_fs_base + X_fs_amp * np.sin(2 * np.pi * X_fs_freq * t + X_fs_phase)
-# X_fs_set = calc_X_fs_set(t)
-# X_out = calc_X_fs_set(sol.t)
+elif EXPERIMENT == 3:
+    #EXPERIMENT 3
+    dt = 1
+    X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
+    X_fs    =        X_iv_t_control * (19 / Total_time) + 1  #[-] fuel rack factor, 20 is maximum apparently
+    Y_iv_t_control = np.array([0,   Total_time])             #[s] setting time point
+    Y_df    =        np.array([1,        1 ])                #[-] disturbance factor
 
-# X_iv_t_control = np.array([0,        Total_time                     ]) #[s] setting time point
-# X_fs    =        np.array([1.0,      1.0                            ]) #[-] fuel rack factor, 1 is maximum
-# Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
-# Y_df    =        np.array([1,        1.5,             1.5,          ]) #[-] disturbance factor
+elif EXPERIMENT == 4:
+    #EXPERIMENT 4
+    #Input
+    X_fs_amp= 0.5
+    X_fs_freq= 0.001
+    X_fs_base= 0.5
+    X_fs_phase = 0
+
+    dt = 1
+    X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
+    X_fs    =        X_fs_base + X_fs_amp * np.sin(2 * np.pi * X_fs_freq * X_iv_t_control + X_fs_phase)  #[-] fuel rack factor, 20 is maximum apparently
+    Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
+    Y_df    =        np.array([1,        1.5,                 1.5,          ]) #[-] disturbance factor
+
+elif EXPERIMENT == 5:
+    #EXPERIMENT 5
+    X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
+    X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0         ]) #[-] fuel rack factor, 1 is maximum
+    Y_iv_t_control = np.array([0,        0.1*Total_time, 0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time, Total_time]) #[s] setting time point
+    Y_df    =        np.array([1,        1.0,            1.0,            1.0,            1.0,            1.0,            1.0         ]) #[-] disturbance factor
 
 
-# dt = 1
-# X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
-# print(X_iv_t_control)
-# X_fs    =        X_fs_base + X_fs_amp * np.sin(2 * np.pi * X_fs_freq * X_iv_t_control + X_fs_phase)  #[-] fuel rack factor, 20 is maximum apparently
-# print(X_fs)
-# Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
-# Y_df    =        np.array([1,        1.5,                 1.5,          ]) #[-] disturbance factor
+# X_iv_t_control += 60
+def apply_gradual_transition(time_array, factor_array, duration=60):
+    """
+    Ensures that for every step change in the factor_array, 
+    it takes 'duration' seconds to get there.
+    """
+    new_t = []
+    new_f = []
+    for i in range(len(time_array)):
+        if i > 0 and factor_array[i] != factor_array[i-1]:
+            # If the time gap is already larger than duration, 
+            # we insert a point to create the slope
+            if time_array[i] - time_array[i-1] > duration:
+                new_t.append(time_array[i] - duration)
+                new_f.append(factor_array[i-1])
+        new_t.append(time_array[i])
+        new_f.append(factor_array[i])
+    return np.array(new_t), np.array(new_f)
 
-#EXPERIMENT 5
-# X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
-# X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0         ]) #[-] fuel rack factor, 1 is maximum
-# Y_iv_t_control = np.array([0,        0.1*Total_time, 0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time, Total_time]) #[s] setting time point
-# Y_df    =        np.array([1,        1.0,            1.0,            1.0,            1.0,            1.0,            1.0         ]) #[-] disturbance factor
-
-#ORIGINEEL
-X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
-X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0        ]) #[-] fuel rack factor, 1 is maximum
-Y_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  Total_time  ]) #[s] setting time point
-Y_df    =        np.array([1,        1.0,             1.0,            1.0,            1.0,            1.0,             1.0         ]) #[-] disturbance factor
-
+# Usage:
+X_iv_t_control, X_fs = apply_gradual_transition(X_iv_t_control, X_fs, 60)
 
 #Time step setting
 """ 
@@ -236,32 +253,32 @@ elif time_set == 'var':
     sol = solve_ivp(main_simulation, [0, Total_time], [v_s0, n_p0, s0, FC0], method=ODE_solver)
 
 #Simulation output
-t_out = sol.t
+t_out                           = sol.t
 v_s_out, n_p_out, s_out, FC_out = sol.y
-X_out = calc_X_fs_set(sol.t, X_iv_t_control, X_fs)
-n_e_out = f_EE(n_p_out, X_out)[0]
-Y_out = f_Y_df_set(sol.t, Y_iv_t_control, Y_df)
-R_out = calc_ShipResistance(v_s_out, Y_out)[0]
-J_out = calc_AdvanceRatio(v_s_out, n_p_out)[1]
-P_E_out = R_out * v_s_out
-M_prop_out = f_PTo(v_s_out, n_p_out)[2]
-P_P_out = M_prop_out * 2 * math.pi * n_p_out
-M_B_out = f_EE(n_p_out, X_out)[6]
-P_B_out = f_EE(n_p_out, X_out)[5]
-R_sp_out = calc_ShipResistance(v_s_out, Y_out)[1]
-F_prop_out = f_PTh(v_s_out, n_p_out)[1]
-M_TRM_out = f_SRD(v_s_out, n_p_out, X_out)[0]
-K_T_out = f_PTh(v_s_out, n_p_out)[0]
-K_Q_out = f_PTo(v_s_out, n_p_out)[0]
-v_a_out = calc_AdvanceRatio(v_s_out, n_p_out)[0]
-P_T_out = F_prop_out * v_a_out
-Q_out = f_PTo(v_s_out, n_p_out)[1]
-P_O_out = 2 * math.pi * Q_out * n_p_out
-Q_f_out = f_EE(n_p_out, X_out)[3]
-eta_hull_out = P_E_out / P_T_out
-eta_O_out = P_T_out / P_O_out
-eta_TRM_out = P_P_out / P_B_out
-eta_e_out = np.linspace(eta_e, eta_e, len(t_out))
+X_out                           = calc_X_fs_set(sol.t, X_iv_t_control, X_fs)
+n_e_out                         = f_EE(n_p_out, X_out)[0]
+Y_out                           = f_Y_df_set(sol.t, Y_iv_t_control, Y_df)
+R_out                           = calc_ShipResistance(v_s_out, Y_out)[0]
+J_out                           = calc_AdvanceRatio(v_s_out, n_p_out)[1]
+P_E_out                         = R_out * v_s_out
+M_prop_out                      = f_PTo(v_s_out, n_p_out)[2]
+P_P_out                         = M_prop_out * 2 * math.pi * n_p_out
+M_B_out                         = f_EE(n_p_out, X_out)[6]
+P_B_out                         = f_EE(n_p_out, X_out)[5]
+R_sp_out                        = calc_ShipResistance(v_s_out, Y_out)[1]
+F_prop_out                      = f_PTh(v_s_out, n_p_out)[1]
+M_TRM_out                       = f_SRD(v_s_out, n_p_out, X_out)[0]
+K_T_out                         = f_PTh(v_s_out, n_p_out)[0]
+K_Q_out                         = f_PTo(v_s_out, n_p_out)[0]
+v_a_out                         = calc_AdvanceRatio(v_s_out, n_p_out)[0]
+P_T_out                         = F_prop_out * v_a_out
+Q_out                           = f_PTo(v_s_out, n_p_out)[1]
+P_O_out                         = 2 * math.pi * Q_out * n_p_out
+Q_f_out                         = f_EE(n_p_out, X_out)[3]
+eta_hull_out                    = P_E_out / P_T_out
+eta_O_out                       = P_T_out / P_O_out
+eta_TRM_out                     = P_P_out / P_B_out
+eta_e_out                       = np.linspace(eta_e, eta_e, len(t_out))
 
 print("Time point length:", len(t_out))
 
