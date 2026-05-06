@@ -306,7 +306,7 @@ plt.grid(True)
 plt.title('figuur 2', loc='right', pad=20)
 plt.savefig('figures/start_fig02.jpg')
 
-
+#TEST BITCHES
 
 
 plt.show(block=False)
