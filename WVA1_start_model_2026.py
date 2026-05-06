@@ -24,7 +24,7 @@ from scipy.integrate import BDF, LSODA, RK23, RK45, Radau, solve_ivp
 
 #Initial experiment
 Total_time = 36000 #[s] Total simulation time
-EXPERIMENT = 4
+EXPERIMENT = 5
 
 if EXPERIMENT == 0:
     #ORIGINEEL
@@ -66,18 +66,17 @@ elif EXPERIMENT == 4:
     dt = 1
     X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
     X_fs    =        X_fs_base + X_fs_amp * np.sin(2 * np.pi * X_fs_freq * X_iv_t_control + X_fs_phase)  #[-] fuel rack factor, 20 is maximum apparently
-    Y_iv_t_control = np.array([0,        (5/36)*Total_time,   Total_time]) #[s] setting time point
-    Y_df    =        np.array([1,        1.5,                 1.5,          ]) #[-] disturbance factor
+    Y_iv_t_control = np.array([0,   Total_time])             #[s] setting time point
+    Y_df    =        np.array([1,        1 ])                #[-] disturbance factor
 
 elif EXPERIMENT == 5:
     #EXPERIMENT 5
-    X_iv_t_control = np.array([0,        0.1*Total_time,  0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time,  0.8*Total_time, Total_time]) #[s] setting time point
-    X_fs    =        np.array([1.0,      1.0,             0.2,            0.2,            0.2,            0.2,             1.0,           1.0         ]) #[-] fuel rack factor, 1 is maximum
-    Y_iv_t_control = np.array([0,        0.1*Total_time, 0.2*Total_time, 0.5*Total_time, 0.6*Total_time, 0.7*Total_time, Total_time]) #[s] setting time point
-    Y_df    =        np.array([1,        1.0,            1.0,            1.0,            1.0,            1.0,            1.0         ]) #[-] disturbance factor
+    dt = 1
+    X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
+    X_fs    =        X_iv_t_control * (-1 / Total_time) + 1  #[-] fuel rack factor
+    Y_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
+    Y_df    =        Y_iv_t_control * (1 / Total_time)       #[-] disturbance factor
 
-
-# X_iv_t_control += 60
 def apply_gradual_transition(time_array, factor_array, duration=60):
     """
     Ensures that for every step change in the factor_array, 
@@ -223,7 +222,7 @@ def f_EE(n_p, x_fs_set):
     P_B = W_e  * e_num_of_engines * e_eta_el
     M_B = P_B /(2*math.pi * n_e)    
     dFCdt = e_current * e_voltage # vermogen dt sommeert tot electrische energie
-    Q_f = 0  
+    Q_f = (W_e * e_num_of_engines) - P_B
     m_fuel_flux = e_current
     return [n_e, m_fuel_flux, dFCdt, Q_f, W_e, P_B, M_B]
 
