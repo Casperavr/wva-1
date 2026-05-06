@@ -24,7 +24,7 @@ from scipy.integrate import BDF, LSODA, RK23, RK45, Radau, solve_ivp
 
 #Initial experiment
 Total_time = 36000 #[s] Total simulation time
-EXPERIMENT = 0
+EXPERIMENT = 4
 
 if EXPERIMENT == 0:
     #ORIGINEEL
@@ -37,8 +37,8 @@ elif EXPERIMENT == 1:
     #EXPERIMENT 1
     X_iv_t_control = np.array([0,        0.2*Total_time,  0.2*Total_time,  0.4*Total_time, 0.4*Total_time, 0.6*Total_time, 0.6*Total_time, 0.8*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
     X_fs    =        np.array([1.0,      1.0,             0.75,            0.75,           0.5,            0.5,            0.25,           0.25,           0.01,           0.01      ]) #[-] fuel rack factor, 1 is maximum
-    Y_iv_t_control = np.array([0,        0.2*Total_time,  0.4*Total_time,  0.6*Total_time, 0.8*Total_time, Total_time]) #[s] setting time point
-    Y_df    =        np.array([1,        1.0,             1.0,             1.0,            1.0,            1.0       ]) #[-] disturbance factor
+    Y_iv_t_control = np.array([0,   Total_time])             #[s] setting time point
+    Y_df    =        np.array([1,        1 ])                #[-] disturbance factor
 
 elif EXPERIMENT == 2:
     #EXPERIMENT 2
@@ -51,7 +51,7 @@ elif EXPERIMENT == 3:
     #EXPERIMENT 3
     dt = 1
     X_iv_t_control = np.arange(dt, Total_time + dt, dt)      #[s] setting time point
-    X_fs    =        X_iv_t_control * (19 / Total_time) + 1  #[-] fuel rack factor, 20 is maximum apparently
+    X_fs    =        X_iv_t_control * (19 / Total_time) + 1  #[-] fuel rack factor, 20 is maximum
     Y_iv_t_control = np.array([0,   Total_time])             #[s] setting time point
     Y_df    =        np.array([1,        1 ])                #[-] disturbance factor
 
@@ -274,7 +274,8 @@ v_a_out                         = calc_AdvanceRatio(v_s_out, n_p_out)[0]
 P_T_out                         = F_prop_out * v_a_out
 Q_out                           = f_PTo(v_s_out, n_p_out)[1]
 P_O_out                         = 2 * math.pi * Q_out * n_p_out
-Q_f_out                         = f_EE(n_p_out, X_out)[3]
+# Q_f_out                         = f_EE(n_p_out, X_out)[3]
+Q_f_out                         = np.full_like(t_out, f_EE(n_p_out, X_out)[3])
 eta_hull_out                    = P_E_out / P_T_out
 eta_O_out                       = P_T_out / P_O_out
 eta_TRM_out                     = P_P_out / P_B_out
@@ -310,7 +311,7 @@ plt.xlabel('Time [s]')
 plt.ylabel('Fuel rack [%]')
 plt.grid(True)
 plt.tight_layout()
-plt.savefig('figures/start_fig01.jpg')
+plt.savefig(f'figures/start_fig01_EXPERIMENT-{EXPERIMENT}.jpg')
 
 
 plt.figure(2, figsize=(16,9))
@@ -321,10 +322,28 @@ plt.xlabel('Time [s]')
 plt.ylabel('Ship speed [m/s], Engine / Propeller speed [rps]')
 plt.grid(True)
 plt.title('figuur 2', loc='right', pad=20)
-plt.savefig('figures/start_fig02.jpg')
+plt.savefig(f'figures/Speeds-Time_EXPERIMENT-{EXPERIMENT}.jpg')
 
-
-
+def plotLineGraph(x, ylist, xlabel, ylabels, title, yunit):
+    plt.figure(figsize=(16,9))
+    for i in range(len(ylist)):
+        plt.plot(x, ylist[i], linewidth=width, label=ylabels[i])
+    plt.legend(loc='upper right')
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(yunit)
+    plt.grid(True)
+    plt.savefig(f'figures/{title.replace(" ", "")}_EXPERIMENT-{EXPERIMENT}.jpg')    
+    plt.show(block = False)
+    
+plotLineGraph(v_s_out, [R_out], 'Ship speed [m/s]', ["Resistance [N]"], "Ship resistance - Ship speed", "[N]")
+plotLineGraph(v_a_out, [F_prop_out], 'Instroomsnelheid bij schroef [m/s]', ["Schroefstuwkracht [N]"], "Instroomsnelheid - Schroefstuwkracht", "[N]")
+plotLineGraph(x=n_p_out, ylist=[M_prop_out], xlabel='Propeller rot. speed [rps]', ylabels=["Schroefkoppel [Nm]"], title="Propeller rot. speed - Schroefkoppel", yunit="[Nm]")
+plotLineGraph(x=n_e_out, ylist=[M_B_out], xlabel='Engine rot. speed [rps]', ylabels=["Elektromotorkoppel [Nm]"], title="Engine rot. speed - Elektromotorkoppel",yunit="[Nm]")
+plotLineGraph(x=t_out, ylist=[P_E_out, P_O_out, P_B_out, Q_f_out], xlabel='Time [s]', ylabels=["Effectief vermogen [W]", "Geleverd vermogen [W]", "Elektromotor vermogen [W]", "Warmteverlies elektromotor [W]"], title="Vermogens - Tijd", yunit="[W]")
+plotLineGraph(x=t_out, ylist=[eta_hull_out, eta_O_out, eta_TRM_out, eta_e_out], xlabel='Time [s]', ylabels=["Romprendement [-]", "Open-water schroefrendement [-]", "Transmissie-efficiëntie [-]", "Nominaal elektrisch motorrendement [-]"], title="Efficiënties - Tijd", yunit="[-]")
+plotLineGraph(x=P_P_out, ylist=[eta_O_out], xlabel='Propellor vermogen [W]', ylabels=["Open-water schroefrendement [-]"], title="Propellor vermogen - schroefrendement",yunit="[-]")
+plotLineGraph(x=P_B_out, ylist=[eta_e_out], xlabel='Elektromotor vermogen [W]', ylabels=["Transmissie-efficiëntie [-]"], title="Transmissie-efficiëntie - schroefrendement",yunit="[-]")
 
 plt.show(block=False)
 print('End simulation run')
