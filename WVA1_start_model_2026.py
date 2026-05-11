@@ -250,7 +250,7 @@ if time_set == 'fix':
 elif time_set == 'var':
     #Variable-time step ODE solver
     sol = solve_ivp(main_simulation, [0, Total_time], [v_s0, n_p0, s0, FC0], method=ODE_solver)
-# ik ben cooler
+
 #Simulation output
 t_out                           = sol.t
 v_s_out, n_p_out, s_out, FC_out = sol.y
