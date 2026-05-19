@@ -97,6 +97,8 @@ def apply_gradual_transition(time_array, factor_array, duration=60):
 
 # Usage:
 X_iv_t_control, X_fs = apply_gradual_transition(X_iv_t_control, X_fs, 60)
+# Enforce physical bounds for fuel rack factor.
+X_fs = np.clip(X_fs, 0.0, 1.0)
 
 #Time step setting
 """ 
@@ -250,7 +252,7 @@ if time_set == 'fix':
 elif time_set == 'var':
     #Variable-time step ODE solver
     sol = solve_ivp(main_simulation, [0, Total_time], [v_s0, n_p0, s0, FC0], method=ODE_solver)
-# ik ben cool
+# ik ben cooler
 #Simulation output
 t_out                           = sol.t
 v_s_out, n_p_out, s_out, FC_out = sol.y
@@ -304,8 +306,8 @@ plt.xlabel('Time [s]')
 plt.ylabel('Electric energy consumed [Ws=J]')
 plt.grid(True)
 plt.subplot(4, 1, 4)
-plt.ylim(0,2)
-plt.plot(t_out, X_out, linewidth=width)
+# plt.ylim(0,2)
+plt.plot(t_out, X_out * 100, linewidth=width)
 plt.xlabel('Time [s]')
 plt.ylabel('Fuel rack [%]')
 plt.grid(True)
@@ -335,14 +337,14 @@ def plotLineGraph(x, ylist, xlabel, ylabels, title, yunit):
     plt.savefig(f'figures/{title.replace(" ", "")}_EXPERIMENT-{EXPERIMENT}.jpg')    
     plt.show(block = False)
     
-plotLineGraph(v_s_out, [R_out], 'Ship speed [m/s]', ["Resistance [N]"], "Ship resistance - Ship speed", "[N]")
-plotLineGraph(v_a_out, [F_prop_out], 'Instroomsnelheid bij schroef [m/s]', ["Schroefstuwkracht [N]"], "Instroomsnelheid - Schroefstuwkracht", "[N]")
-plotLineGraph(x=n_p_out, ylist=[M_prop_out], xlabel='Propeller rot. speed [rps]', ylabels=["Schroefkoppel [Nm]"], title="Propeller rot. speed - Schroefkoppel", yunit="[Nm]")
-plotLineGraph(x=n_e_out, ylist=[M_B_out], xlabel='Engine rot. speed [rps]', ylabels=["Elektromotorkoppel [Nm]"], title="Engine rot. speed - Elektromotorkoppel",yunit="[Nm]")
-plotLineGraph(x=t_out, ylist=[P_E_out, P_O_out, P_B_out, Q_f_out], xlabel='Time [s]', ylabels=["Effectief vermogen [W]", "Geleverd vermogen [W]", "Elektromotor vermogen [W]", "Warmteverlies elektromotor [W]"], title="Vermogens - Tijd", yunit="[W]")
-plotLineGraph(x=t_out, ylist=[eta_hull_out, eta_O_out, eta_TRM_out, eta_e_out], xlabel='Time [s]', ylabels=["Romprendement [-]", "Open-water schroefrendement [-]", "Transmissie-efficiëntie [-]", "Nominaal elektrisch motorrendement [-]"], title="Efficiënties - Tijd", yunit="[-]")
-plotLineGraph(x=P_P_out, ylist=[eta_O_out], xlabel='Propellor vermogen [W]', ylabels=["Open-water schroefrendement [-]"], title="Propellor vermogen - schroefrendement",yunit="[-]")
-plotLineGraph(x=P_B_out, ylist=[eta_e_out], xlabel='Elektromotor vermogen [W]', ylabels=["Transmissie-efficiëntie [-]"], title="Transmissie-efficiëntie - schroefrendement",yunit="[-]")
+plotLineGraph(v_s_out, [R_out], 'Ship speed [m/s]', ["Resistance [N]"], "Ship resistance - Ship speed", "Weerstand [N]")
+plotLineGraph(v_a_out, [F_prop_out], 'Instroomsnelheid bij schroef [m/s]', ["Schroefstuwkracht [N]"], "Instroomsnelheid - Schroefstuwkracht", "Stuwkracht [N]")
+plotLineGraph(x=n_p_out, ylist=[M_prop_out], xlabel='Propeller rot. speed [rps]', ylabels=["Schroefkoppel [Nm]"], title="Propeller rot. speed - Schroefkoppel", yunit="Koppel [Nm]")
+plotLineGraph(x=n_e_out, ylist=[M_B_out], xlabel='Engine rot. speed [rps]', ylabels=["Elektromotorkoppel [Nm]"], title="Engine rot. speed - Elektromotorkoppel",yunit="Koppel [Nm]")
+plotLineGraph(x=t_out, ylist=[P_E_out, P_O_out, P_B_out, Q_f_out], xlabel='Time [s]', ylabels=["Effectief vermogen [W]", "Geleverd vermogen [W]", "Elektromotor vermogen [W]", "Warmteverlies elektromotor [W]"], title="Vermogens - Tijd", yunit="Vermogen [W]")
+plotLineGraph(x=t_out, ylist=[eta_hull_out, eta_O_out, eta_TRM_out, eta_e_out], xlabel='Time [s]', ylabels=["Romprendement [-]", "Open-water schroefrendement [-]", "Transmissie-efficiëntie [-]", "Nominaal elektrisch motorrendement [-]"], title="Efficiënties - Tijd", yunit="Efficientie [-]")
+plotLineGraph(x=P_P_out, ylist=[eta_O_out], xlabel='Propellor vermogen [W]', ylabels=["Open-water schroefrendement [-]"], title="Propellor vermogen - schroefrendement",yunit="Rendement [-]")
+plotLineGraph(x=P_B_out, ylist=[eta_e_out], xlabel='Elektromotor vermogen [W]', ylabels=["Transmissie-efficiëntie [-]"], title="Transmissie-efficiëntie - schroefrendement",yunit="Efficiëntie [-]")
 
 plt.show(block=False)
 print('End simulation run')
